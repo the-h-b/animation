@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* CSS to set the position and size of the animation container */
+    #animation-container {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 100px; /* Adjust the height as needed */
+      margin: 0;
+      padding: 0;
+      border: none;
+      overflow: hidden;
+      z-index: 9999; /* Ensure the animation is on top of other elements */
+    }
+
+    /* CSS to style the ball */
+    .ball {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: #276133;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    hey! this site is for HB
+  </header>
+
+  <div id="animation-container"></div>
+
+  <!-- Rest of your HTML content goes here -->
+
+  <script>
+    function startBouncingBalls() {
+      var container = document.getElementById('animation-container');
+      var containerWidth = container.offsetWidth;
+      var containerHeight = container.offsetHeight;
+      var balls = [];
+
+      function createBall(x, y, speedX, speedY) {
+        var ball = document.createElement('div');
+        ball.className = 'ball';
+        ball.style.left = x + 'px';
+        ball.style.top = y + 'px';
+
+        container.appendChild(ball);
+        balls.push({ element: ball, x: x, y: y, speedX: speedX, speedY: speedY });
+      }
+
+      function getRandomSpeed() {
+        // Generate a random speed between -3 and 3
+        return (Math.random() * 6) - 3;
+      }
+
+      function getRandomColor() {
+        // Generate a random hexadecimal color code
+        return '#' + Math.floor(Math.random() * 16777215).toString(16);
+      }
+
+      function animateBalls() {
+        for (var i = 0; i < balls.length; i++) {
+          var ball = balls[i];
+          ball.x += ball.speedX;
+          ball.y += ball.speedY;
+
+          if (ball.x + ball.element.offsetWidth >= containerWidth || ball.x <= 0) {
+            ball.speedX *= -1; // Reverse horizontal direction when hitting container edges
+            ball.element.style.backgroundColor = getRandomColor(); // Change ball color
+          }
+
+          if (ball.y + ball.element.offsetHeight >= containerHeight || ball.y <= 0) {
+            ball.speedY *= -1; // Reverse vertical direction when hitting container edges
+            ball.element.style.backgroundColor = getRandomColor(); // Change ball color
+          }
+
+          // Ensure the ball stays within the container boundaries
+          ball.x = Math.max(0, Math.min(containerWidth - ball.element.offsetWidth, ball.x));
+          ball.y = Math.max(0, Math.min(containerHeight - ball.element.offsetHeight, ball.y));
+
+          ball.element.style.left = ball.x + 'px';
+          ball.element.style.top = ball.y + 'px';
+        }
+
+        requestAnimationFrame(animateBalls);
+      }
+
+      var initialBallCount = 5; // Initial number of balls
+
+      for (var i = 0; i < initialBallCount; i++) {
+        var x = Math.random() * (containerWidth - 5);
+        var y = Math.random() * (containerHeight - 5);
+        var speedX = getRandomSpeed();
+        var speedY = getRandomSpeed();
+        createBall(x, y, speedX, speedY);
+      }
+
+      animateBalls();
+    }
+
+    // Wait for the DOM to load before starting the animation
+    document.addEventListener('DOMContentLoaded', startBouncingBalls);
+  </script>
+</body>
+</html>
